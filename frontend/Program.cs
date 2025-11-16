@@ -5,13 +5,11 @@ using GloboTicket.Frontend.Services.ShoppingBasket.Dapr;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// note: for this demo we're using the DAPR_HTTP_PORT environment variable to decide if we're using Dapr or not
 builder.Services.AddHttpClient<IEventCatalogService, EventCatalogService>((sp, c) =>
     c.BaseAddress = new Uri(sp.GetService<IConfiguration>()["ApiConfigs:EventCatalog:Uri"]));
-builder.Services.AddScoped<IShoppingBasketService, DaprClientStateStoreShoppingBasket>();
+builder.Services.AddScoped<IShoppingBasketService, DaprClientStateStoreShoppingBasket>(); // Using Dapr state store for shopping basket
 builder.Services.AddHttpClient<IOrderSubmissionService, HttpOrderSubmissionService>((sp, c) =>
     c.BaseAddress = new Uri(sp.GetService<IConfiguration>()["ApiConfigs:Ordering:Uri"]));
 
@@ -20,8 +18,9 @@ builder.Services.AddDaprClient();
 
 var daprPort = Environment.GetEnvironmentVariable("DAPR_HTTP_PORT");
 
+
 builder.Services.AddHttpClient<IEventCatalogService, EventCatalogService>(c =>
-    c.BaseAddress = new Uri($"http://localhost:{daprPort}/v1.0/invoke/catalog/method/"));
+    c.BaseAddress = new Uri($"http://localhost:{daprPort}/v1.0/invoke/catalog/method/")); // Service invocation via Dapr
 
 var app = builder.Build();
 
