@@ -61,9 +61,14 @@ public class EventRepository : IEventRepository
     {
         try
         {
-            var connectionString = _daprClient.GetSecretAsync("secretstore", "eventCatalogDb");
+            var connectionString = await GetConnectionStringAsync();
+            logger.LogInformation($"Success pulling the connection string from Dapr Secret Store: {connectionString}");
         }
-        return Task.FromResult((IEnumerable<Event>)events);
+        catch 
+        {
+            logger.LogError("Error pulling the connection string from the Dapr secret Store.");
+        }
+        return events;
     }
 
     public async Task<string> GetConnectionStringAsync()
