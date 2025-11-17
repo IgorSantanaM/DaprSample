@@ -1,12 +1,17 @@
+using Dapr.Client;
+using System.Runtime.CompilerServices;
+
 namespace GloboTicket.Catalog.Repositories;
 
 public class EventRepository : IEventRepository
 {
+    private readonly DaprClient _daprClient;
     private List<Event> events = new List<Event>();
     private readonly ILogger<EventRepository> logger;
 
-    public EventRepository(ILogger<EventRepository> logger)
+    public EventRepository(ILogger<EventRepository> logger, DaprClient daprClient)
     {
+        _daprClient = daprClient;
         this.logger = logger;
 
         LoadSampleData();
@@ -52,12 +57,22 @@ public class EventRepository : IEventRepository
         });
     }
 
-    public Task<IEnumerable<Event>> GetEvents()
+    public async Task<IEnumerable<Event>> GetEvents()
     {
-        // this just returning an in-memory list for now
+        try
+        {
+            var connectionString = _daprClient.GetSecretAsync("secretstore", "eventCatalogDb");
+        }
         return Task.FromResult((IEnumerable<Event>)events);
     }
 
+    public async Task<string> GetConnectionStringAsync()
+    {
+        var secretstoreName = Environment.GetEnvironmentVariable("SECRET_STORE_NAME") ?? throw new InvalidOperationException("SECRET_STORE_NAME environment variable is not set");
+        var secretName = "eventcatalogdb";
+        var secret = await _daprClient.GetSecretAsync(secretstoreName, secretName);
+        return secret[secretName];
+    }
 
     public Task<Event> GetEventById(Guid eventId)
     {
