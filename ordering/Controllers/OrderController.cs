@@ -23,7 +23,7 @@ public class OrderController : ControllerBase
     public async Task<IActionResult> Submit(OrderForCreation order)
     {
         logger.LogInformation($"Received a new order from {order.CustomerDetails.Name}");
-        //await emailSender.SendEmailForOrder(order);
+        await emailSender.SendEmailForOrder(order);
         return Ok();
     }
 }
