@@ -1,3 +1,4 @@
+using Dapr;
 using GloboTicket.Ordering.Model;
 using GloboTicket.Ordering.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -18,10 +19,11 @@ public class OrderController : ControllerBase
     }
 
     [HttpPost("", Name = "SubmitOrder")]
+    [Topic("pubsub", "orders")]
     public async Task<IActionResult> Submit(OrderForCreation order)
     {
         logger.LogInformation($"Received a new order from {order.CustomerDetails.Name}");
-        await emailSender.SendEmailForOrder(order);
+        //await emailSender.SendEmailForOrder(order);
         return Ok();
     }
 }

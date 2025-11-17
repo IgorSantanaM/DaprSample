@@ -14,5 +14,6 @@ spec:
       key: account-key
   - name: containerName
     value: "statestore"
+    
 auth:
   secretStore: kubernetes

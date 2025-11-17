@@ -1,5 +1,4 @@
 using GloboTicket.Catalog.Repositories;
-using GloboTicket.Frontend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,10 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<IEventRepository, EventRepository>();
 
-var daprPort = Environment.GetEnvironmentVariable("DAPR_HTTP_PORT");
-
-builder.Services.AddHttpClient<IEventCatalogService>
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddDapr();
 builder.Services.AddEndpointsApiExplorer();
 var app = builder.Build();
 
