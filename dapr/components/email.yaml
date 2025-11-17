@@ -1,0 +1,22 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: sendmail
+spec:
+  type: bindings.smtp
+  version: v1
+  metadata:
+  - name: host
+    value: smtp.mailtrap.io
+  - name: port
+    value: "2525"
+  - name: username
+    valueFromSecret:
+      name: mailtrap-secret
+      key: username
+  - name: password
+    valueFromSecret:
+      name: mailtrap-secret
+      key: password
+scopes: 
+- ordering

@@ -1,0 +1,13 @@
+apiVersion: dapr.io/v1alpha1  
+kind: Component
+metadata:
+  name: scheduled
+  namspace: default
+spec:
+  type: bindings.cron
+  versuion: v1
+  metadata:
+  - name: schedule
+    value: "*/5 * * * *"
+scopes:
+- catalog
